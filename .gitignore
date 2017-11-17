@@ -1,0 +1,11 @@
+/turtleFSharp/.paket/Paket.Restore.targets
+/turtleFSharp/.vs/TurtleGraphics/v14/*.suo
+**/bin/Debug/**
+**/bin/**
+/turtleFSharp/TurtleGraphics/.vs/TurtleGraphics/v14/*.suo
+/turtleFSharp/TurtleGraphics/obj/Debug
+**/obj/**
+/turtleFSharp/packages/*
+/turtleFSharp/paket-files/*
+/turtleHaskell/.stack-work/**
+/turtleFSharp/.fake
