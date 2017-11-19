@@ -26,6 +26,8 @@ executable turtle-exe
   build-depends:       base
                      , turtle
                      , GLUT
+                     , parsec
+  other-modules:       PartOne
   default-language:    Haskell2010
 
 test-suite turtle-test
