@@ -4,7 +4,7 @@
 
 # How to run:
 
-```stack exec turtle-exec```
+```stack exec turtle-exe```
 
 # FAQ
 
