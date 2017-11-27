@@ -22,7 +22,7 @@ library
 executable turtle-exe
   hs-source-dirs:      app
   main-is:             Main.hs
-  ghc-options:         -rtsopts -with-rtsopts=-N
+  ghc-options:         -rtsopts
   build-depends:       base
                      , turtle
                      , GLUT
