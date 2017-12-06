@@ -27,7 +27,8 @@ executable turtle-exe
                      , turtle
                      , GLUT
                      , parsec
-  other-modules:       PartOne
+                     , time
+  other-modules:       PartTwo
   default-language:    Haskell2010
 
 test-suite turtle-test

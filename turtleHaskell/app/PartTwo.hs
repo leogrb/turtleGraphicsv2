@@ -1,10 +1,10 @@
 {-# LANGUAGE FlexibleContexts #-}
-module PartOne where
+module PartTwo where
 
 import Text.Parsec
 
 type Value = Float
-data Cmd = Forward Value | Left Value | Right Value 
+data Cmd = Forward Value | Left Value | Right Value -- | add imperative constructors
 
 -- completify the domain model...
 
@@ -12,8 +12,8 @@ type Program = [Cmd]
 
 type Vec2 = (Float, Float)
 
-runTurtleProgram :: (Float,Float) -> Program -> [Vec2]
-runTurtleProgram startPos program = 
+runTurtleProgram :: Float -> (Float,Float) -> Program -> [Vec2]
+runTurtleProgram supply startPos program = 
     --error "todo implement"
     [(0.0, 0.0), (6.123031769e-15, 100.0), (98.0, 100.0), (98.0, 4.0), (4.0, 4.0),
     (4.0, 96.0), (94.0, 96.0), (94.0, 8.0), (8.0, 8.0), (8.0, 92.0), (90.0, 92.0),

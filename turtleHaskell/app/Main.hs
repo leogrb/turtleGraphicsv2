@@ -4,14 +4,17 @@ module Main where
 
 import Lib
 import Graphics.UI.GLUT
-import qualified PartOne as PartOne
+import qualified PartTwo as PartTwo
+import Data.Time
 
  
 main :: IO ()
 main = do
   (_progName, _args) <- getArgsAndInitialize
   _window <- createWindow "Functional Languages WS17, Turtle Graphics Project"
-  displayCallback $= display
+  startTime <- getCurrentTime
+  displayCallback $= display startTime
+  idleCallback $= Just (display startTime)
   reshapeCallback $= Just reshape
   mainLoop
  
@@ -25,11 +28,14 @@ reshape size = do
   loadIdentity
   postRedisplay Nothing
 
-display :: DisplayCallback
-display = do 
+display :: UTCTime -> DisplayCallback
+display startTime = do 
   clear [ColorBuffer]
   -- dummy input so far
-  let points = PartOne.runTurtleProgram undefined undefined
+  currentTime <- getCurrentTime
+  let timeDiff = diffUTCTime currentTime startTime
+  print (realToFrac timeDiff)
+  let points = PartTwo.runTurtleProgram (realToFrac  timeDiff) undefined undefined
   renderPrimitive LineStrip $
      mapM_ (\(x, y) -> vertex $ Vertex2 x y) points
   flush
