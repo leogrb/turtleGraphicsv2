@@ -9,3 +9,5 @@
 /turtleFSharp/paket-files/*
 /turtleHaskell/.stack-work/**
 /turtleFSharp/.fake
+/turtleFSharp/.vs/TurtleGraphics/v15/*.suo
+/turtleNetCore/.vs/turtleNetCore/v15/*.suo
