@@ -22,7 +22,7 @@ let render (control : GameWindow) (args : FrameEventArgs) =
 
     GL.Begin(PrimitiveType.LineStrip);
 
-    let exampleProgram,initialState = PartTwo.Examples.star
+    let exampleProgram,initialState = PartTwo.Examples.spiral
     let foodSupply = sw.Elapsed.TotalSeconds * 300.0
     let points = PartTwo.runTurtleProgram  { initialState with food = foodSupply } exampleProgram
 

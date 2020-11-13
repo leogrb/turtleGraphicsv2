@@ -1,13 +1,17 @@
-﻿#if INTERACTIVE
+﻿// BIF5 FUS - Final Project - PartTwo
+// by Leo Gruber (if18b113)
+// PartOne extended
+#if INTERACTIVE
 #r "../packages/FParsec/lib/net40-client/FParsecCS.dll"
 #r "../packages/FParsec/lib/net40-client/FParsec.dll"
 #else
 namespace Turtle
 #endif
 
-
 [<AutoOpen>]
 module PartTwo =
+    open System
+
     type Value = float
     type Variable = string
 
@@ -15,37 +19,52 @@ module PartTwo =
     type Comparison = Less | Greater | Equal
 
     type Cmd =
-        | Forward of Variable
-        | Left    of Variable
-        | Right   of Variable  
-        | Assign  of Variable * Variable * BinaryOp * Variable 
+        | Forward of Variable //move forward by distance specified in variable
+        | Left    of Variable //turn left by angle specified in variable
+        | Right   of Variable //turn right by angle specified in variable
+        | Assign  of Variable * Variable * BinaryOp * Variable
         | Declare of Variable * Value
-        | While   of Variable * Comparison * Variable * list<Cmd>
+        | While   of Variable * Comparison * Variable * list<Cmd>  
 
     type Program = list<Cmd>
 
     type Vec2 = float * float
     type Angle = float
 
-    type TurtleState =
+    type TurtleState = 
         {
-            variables     : Map<string,Value>
-            trail         : list<Vec2>
-            position      : Vec2
-            direction     : Angle
-            food          : float
+            variables : Map<Variable,Value>
+            direction : Angle     // direction in degrees
+            position  : Vec2       // current position
+            trail     : list<Vec2> // points produced so far
+            food      : float
         }
-        
+    
 
-    module Logics =
-        let moveForward ((x,y) : Vec2) (angle : Angle) (distance : float) =
-            let angleInRadians = angle * ((2.0 * System.Math.PI) / 360.0)
-            x + distance * cos angleInRadians, y + distance * sin angleInRadians
+    module Logics = 
+        let computeForwardMove (s : TurtleState) (f : Value) =
+            let d = s.direction
+            let p = s.position
+            let x = fst p
+            let y = snd p
+            let rad = d * (Math.PI / float 180)
+            let pNew = (x + ((sin rad) * f), y + ((cos rad) * f))
+            let trailNew = pNew :: s.trail
+            {s with position = pNew; trail = trailNew}
 
+        let computeLeftMove (s : TurtleState) (f : Value) =
+            let dNew = (s.direction - f) % float 360
+            {s with direction = dNew}
+
+        let computeRightMove (s : TurtleState) (f : Value) =
+            let dNew = (s.direction + f) % float 360
+            {s with direction = dNew}
+
+    
     [<CompilationRepresentation(CompilationRepresentationFlags.ModuleSuffix)>]
     module TurtleState =
- 
-        let lookup (s : TurtleState) (varName : string) =
+
+        let lookup (s : TurtleState) (varName : string) : Value =
             match Map.tryFind varName s.variables with
                 | Some v-> v
                 | _ -> failwithf "undeclared variable: %s" varName
@@ -75,10 +94,30 @@ module PartTwo =
             | Equal -> arg = comparand
 
     let rec interpretCmd (state : TurtleState) (c : Cmd) : TurtleState =
-        failwith "todo"
+        match c with
+        | Forward v -> 
+            Logics.computeForwardMove state (TurtleState.lookup state v)
+        | Left v -> 
+            Logics.computeLeftMove state (TurtleState.lookup state v)
+        | Right v -> 
+            Logics.computeRightMove state (TurtleState.lookup state v)
+        | Assign (key,v1,op,v2) -> 
+            let val1 = TurtleState.lookup state v1
+            let val2 = TurtleState.lookup state v2
+            let res = interpretOp op val1 val2
+            TurtleState.setVariable state key res
+        | Declare (key,v) -> 
+            TurtleState.setVariable state key v
+        | While (v1,cmp,v2,cmds) -> 
+            let val1 = TurtleState.lookup state v1
+            let val2 = TurtleState.lookup state v2
+            if (interpretCmp cmp val1 val2) then
+                let s = interpret state cmds
+                interpretCmd s c
+            else state
 
     and interpret (state : TurtleState) (commands : list<Cmd>) =
-        failwith "todo" 
+        List.fold interpretCmd state commands 
 
 
     module Examples =
@@ -121,4 +160,3 @@ module PartTwo =
     let runTurtleProgram (initialState : TurtleState) (p : Program) : list<Vec2> =
         let resultState = interpret initialState p
         resultState.trail |> List.rev
-
