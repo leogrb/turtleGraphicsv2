@@ -21,15 +21,12 @@ let render (control : GameWindow) (args : FrameEventArgs) =
     
 
     GL.Begin(PrimitiveType.LineStrip);
-
-    let exampleProgram,initialState = PartTwo.Examples.spiral
+    let exampleProgram,initialState = PartTwo.Examples.star
     let foodSupply = sw.Elapsed.TotalSeconds * 300.0
     let points = PartTwo.runTurtleProgram  { initialState with food = foodSupply } exampleProgram
-
     GL.Color3(1.0f, 1.0f, 1.0f)
     for (x,y) in points do
         GL.Vertex2(x,y);
-
     GL.End();
     control.SwapBuffers()
 

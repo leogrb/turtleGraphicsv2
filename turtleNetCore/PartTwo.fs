@@ -1,6 +1,6 @@
 ﻿// BIF5 FUS - Final Project - PartTwo
 // by Leo Gruber (if18b113)
-// PartOne extended
+
 #if INTERACTIVE
 #r "../packages/FParsec/lib/net40-client/FParsecCS.dll"
 #r "../packages/FParsec/lib/net40-client/FParsec.dll"
@@ -50,7 +50,7 @@ module PartTwo =
             let rad = d * (Math.PI / float 180)
             let pNew = (x + ((sin rad) * f), y + ((cos rad) * f))
             let trailNew = pNew :: s.trail
-            {s with position = pNew; trail = trailNew}
+            {s with position = pNew; trail = trailNew; food = (s.food - f)}
 
         let computeLeftMove (s : TurtleState) (f : Value) =
             let dNew = (s.direction - f) % float 360
@@ -81,6 +81,7 @@ module PartTwo =
                 food = supplies
             }
 
+
     let interpretOp (o : BinaryOp) =
         match o with
             | Add -> (+)
@@ -96,7 +97,13 @@ module PartTwo =
     let rec interpretCmd (state : TurtleState) (c : Cmd) : TurtleState =
         match c with
         | Forward v -> 
-            Logics.computeForwardMove state (TurtleState.lookup state v)
+            if (state.food > 0.0) then
+                let value = TurtleState.lookup state v
+                if (value <= state.food) then
+                    Logics.computeForwardMove state value
+                else
+                    Logics.computeForwardMove state state.food
+            else state
         | Left v -> 
             Logics.computeLeftMove state (TurtleState.lookup state v)
         | Right v -> 
@@ -113,7 +120,9 @@ module PartTwo =
             let val2 = TurtleState.lookup state v2
             if (interpretCmp cmp val1 val2) then
                 let s = interpret state cmds
-                interpretCmd s c
+                if (s.food = 0.0) then
+                    s
+                else interpretCmd s c
             else state
 
     and interpret (state : TurtleState) (commands : list<Cmd>) =
@@ -154,6 +163,87 @@ module PartTwo =
                         Assign("count","count",Add,"one")
                     ]
                 )
+            ]
+            program,state
+
+        // test without loop
+        let test =
+            let state = TurtleState.empty (50.0,60.0) 0.0 
+            let program = [
+                Declare("dist",10.0)
+                Declare("direction",90.0)
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Right "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Right "direction"
+                Forward "dist"
+                Right "direction"
+                Forward "dist"
+                Right "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Right "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Right "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Right "direction"
+                Forward "dist"
+                Right "direction"
+                Forward "dist"
+                Right "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Right "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Right "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Right "direction"
+                Forward "dist"
+                Right "direction"
+                Forward "dist"
+                Right "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Right "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Left "direction"
+                Forward "dist"
+                Left "direction"
             ]
             program,state
 
